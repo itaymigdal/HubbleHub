@@ -144,15 +144,16 @@ if __name__ == '__main__':
                 # Get Also README
                 repos[repo["id"]]["readme"] = get_readme_content(repo["full_name"]) 
             
-            try:
-                repo_content = f'{repo["name"].lower()} {repo["description"].lower()} '
-            except AttributeError:  # Missing description
-                repo_content = repo["name"].lower()
-            
-            if not args.ir: # Include readme
-                repo_content += get_readme_content(repo["full_name"])
-            if evaluate_query(repo_content, keywords, operators):
-                print(f'{colorama.Fore.RED}[RESULT] {colorama.Fore.CYAN}{repo["html_url"]}: {colorama.Fore.MAGENTA}{repo["description"]}')
+            if repo["stargazers_count"] > args.ms:  # Only if repo has the minimum stars
+                try:
+                    repo_content = f'{repo["name"].lower()} {repo["description"].lower()} '
+                except AttributeError:  # Missing description
+                    repo_content = repo["name"].lower()
+                
+                if not args.ir: # Include readme
+                    repo_content += get_readme_content(repo["full_name"])
+                if evaluate_query(repo_content, keywords, operators):
+                    print(f'{colorama.Fore.RED}[RESULT] {colorama.Fore.CYAN}{repo["html_url"]}: {colorama.Fore.MAGENTA}{repo["description"]}')
 
         complete(response) 
 
