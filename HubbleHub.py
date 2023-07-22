@@ -100,7 +100,7 @@ def print_rate_limit():
     logger.info(f"rate_limit_remaining: {rate_limit_remaining}")
 
 
-def complete(result):
+def complete():
     if args.rl:  # Print rate limit information
         print_rate_limit()
     if args.dr:  # Dump full repos dict
@@ -112,8 +112,8 @@ if __name__ == '__main__':
 
     # We want the response global so on KeyboardInterrupt we'll get an updated rate limit
     parser = argparse.ArgumentParser(description="Explore and filter your starred repositories")
-    parser.add_argument("query", help="keywords query")
-    parser.add_argument("-pl", help="include only those languages (split with '|')")
+    parser.add_argument("query", help="keywords query. e.g. \"('cobalt strike' | 'meterpreter') & 'red team'\"")
+    parser.add_argument("-pl", help="include only those languages (split with '|')", default="*")
     parser.add_argument("-ms", type=int, help="minimum stars", default=0)
     parser.add_argument("-ir", action="store_true", help="ignore readme's (search only in repositories name and description)")
     parser.add_argument("-rl", action="store_true", help="print total and remaining rate limit")
@@ -143,22 +143,22 @@ if __name__ == '__main__':
                     repos[repo["id"]][field] = repo[field]
                 # Get Also README
                 repos[repo["id"]]["readme"] = get_readme_content(repo["full_name"]) 
-            
-            if repo["stargazers_count"] > args.ms:  # Only if repo has the minimum stars
-                try:
-                    repo_content = f'{repo["name"].lower()} {repo["description"].lower()} '
-                except AttributeError:  # Missing description
-                    repo_content = repo["name"].lower()
-                
-                if not args.ir: # Include readme
-                    repo_content += get_readme_content(repo["full_name"])
-                if evaluate_query(repo_content, keywords, operators):
-                    print(f'{colorama.Fore.RED}[RESULT] {colorama.Fore.CYAN}{repo["html_url"]}: {colorama.Fore.MAGENTA}{repo["description"]}')
+                       
+            if repo["stargazers_count"] >= args.ms: # Only if repo has the minimum stars
+                if args.pl == "*" or repo["language"] in args.pl.split("|"):  # Only if repo from the included languages
+                    try:
+                        repo_content = f'{repo["name"].lower()} {repo["description"].lower()} '
+                    except AttributeError:  # Missing description
+                        repo_content = repo["name"].lower()
+                    if not args.ir: # Include readme
+                        repo_content += get_readme_content(repo["full_name"])
+                    if evaluate_query(repo_content, keywords, operators):
+                        print(f'{colorama.Fore.RED}[RESULT] {colorama.Fore.CYAN}{repo["html_url"]}: {colorama.Fore.MAGENTA}{repo["description"]}')
 
-        complete(response) 
+        complete() 
 
 
     except KeyboardInterrupt:
         logger.error("Script interrupted")
-        complete(response)
+        complete()
         
