@@ -153,7 +153,12 @@ if __name__ == '__main__':
                     if not args.ir: # Include readme
                         repo_content += get_readme_content(repo["full_name"])
                     if evaluate_query(repo_content, keywords, operators):
-                        print(f'{colorama.Fore.RED}[RESULT] {colorama.Fore.CYAN}{repo["html_url"]}: {colorama.Fore.MAGENTA}{repo["description"]}')
+                        print(
+                            f'{colorama.Fore.RED}[RESULT] '
+                            f'{colorama.Fore.CYAN}{repo["html_url"]}: '
+                            f'{colorama.Fore.MAGENTA}{repo["description"]} '
+                            f'{colorama.Fore.GREEN}({repo["stargazers_count"]}\u2605, {repo["language"]})'
+                        )
 
         complete() 
 
