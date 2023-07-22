@@ -10,7 +10,7 @@ Have you ever needed a tool but discovered that it existed only after it was no 
 Want to explore and filter the repositories you've already starred?
 HubbleHub has got your back!
 
-This tool accepts a query of keywords you're interested in, and searches across your starred repositories, with the ability to filter languages, stars count, and more.
+This tool accepts a query of keywords you're interested in, and searches across your starred repositories (name, description and readme), with the ability to filter languages, stars count, and more.
 
 ## Installation
 1. `git clone https://github.com/itaymigdal/HubbleHub`
