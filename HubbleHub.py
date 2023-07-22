@@ -42,16 +42,6 @@ banner = """
 
 """
 
-# API stuff
-with open("GithubToken.txt", "rt") as f:
-    access_token = f.read()
-headers = {
-    'Authorization': f'token {access_token}',
-    'User-Agent': 'HubbleHub'
-    }
-api_url_starred = 'https://api.github.com/user/starred'
-api_url_readme = "https://api.github.com/repos/{}/readme"
-
 # Init colorama
 colorama.init(autoreset=True)
 
@@ -65,6 +55,21 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_formatter)
 # Add the console handler to the logger
 logger.addHandler(console_handler)
+
+# API stuff
+try:
+    with open("GithubToken.txt", "rt") as f:
+        access_token = f.read()
+except FileNotFoundError:
+    logger.error("Missing GithubToken file")
+    quit()
+    
+headers = {
+    'Authorization': f'token {access_token}',
+    'User-Agent': 'HubbleHub'
+    }
+api_url_starred = 'https://api.github.com/user/starred'
+api_url_readme = "https://api.github.com/repos/{}/readme"
 
 # Global vars
 args = None
