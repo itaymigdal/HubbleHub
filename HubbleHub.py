@@ -5,6 +5,7 @@ import logging
 import colorama
 import argparse
 import requests
+from sys import argv
 from collections import defaultdict
 
 # API stuff
@@ -49,11 +50,10 @@ repo_fields = [
     "updated_at"
 ]
 
-
 def parse_query():
     # Use regular expressions to extract keywords and operators
     keywords = [match[1] for match in re.findall(r'(["\'])(.*?)\1', args.query)]
-    operators = re.findall(r'(\||&)', args.query)
+    operators = re.findall(r'(?:or|and)', args.query)
 
     return keywords, operators
 
@@ -67,13 +67,12 @@ def evaluate_query(description, keywords, operators):
             result = re.search(keyword_regex, description, re.IGNORECASE) is not None
         else:
             operator = operators[i - 1]
-            if operator == "|":
+            if operator == "or":
                 result = result or (re.search(keyword_regex, description, re.IGNORECASE) is not None)
-            elif operator == "&":
+            elif operator == "and":
                 result = result and (re.search(keyword_regex, description, re.IGNORECASE) is not None)
 
     return result
-
 
 def get_readme_content(full_repo_name):
     global rate_limit_limit, rate_limit_remaining
@@ -110,9 +109,18 @@ def complete():
 
 if __name__ == '__main__':
 
-    # We want the response global so on KeyboardInterrupt we'll get an updated rate limit
-    parser = argparse.ArgumentParser(description="Explore and filter your starred repositories")
-    parser.add_argument("query", help="keywords query. e.g. \"('cobalt strike' | 'meterpreter') & 'red team'\"")
+    example_usage = f'''
+Query examples:
+{argv[0]} "'animal or ('dog' and 'cat' and 'bird')'"
+{argv[0]} "('cobalt strike' or 'meterpreter') and 'red team'"
+    '''
+
+    parser = argparse.ArgumentParser(
+    description="Explore and filter your GitHub starred repositories",
+    epilog=example_usage,  
+    formatter_class=argparse.RawDescriptionHelpFormatter,  # Preserve newlines in epilog
+)
+    parser.add_argument("query", help="keywords query")
     parser.add_argument("-pl", help="include only those languages (split with '|')", default="*")
     parser.add_argument("-ms", type=int, help="minimum stars", default=0)
     parser.add_argument("-ir", action="store_true", help="ignore readme's (search only in repositories name and description)")
