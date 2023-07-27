@@ -36,6 +36,7 @@ optional arguments:
   -ms MS      minimum stars
   -ir         ignore readme's (search only in repositories name and description)
   -rl         print total and remaining rate limit
+  -bv         be verbose
   -dr         dump all starred repositories to json (regardless the query)
 
 Query examples:
