@@ -40,7 +40,7 @@ optional arguments:
   -dr         dump all starred repositories to json (regardless the query)
 
 Query examples:
-.\HubbleHub.py "'animal or ('dog' and 'cat' and 'bird')'"
+.\HubbleHub.py "'animal' or ('dog' and 'cat' and 'bird')"
 .\HubbleHub.py "('cobalt strike' or 'meterpreter') and 'red team'"
 ```
 
